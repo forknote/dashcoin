@@ -1,2 +1,0 @@
-# -
-- with hardcoded values
