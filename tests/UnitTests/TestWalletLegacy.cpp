@@ -158,7 +158,7 @@ public:
   WalletLegacyApi() : m_currency(CryptoNote::CurrencyBuilder(m_logger).currency()), generator(m_currency) {
   }
 
-  void SetUp();
+  void SetUp() override;
 
 protected:
   void prepareAliceWallet();
@@ -1392,7 +1392,7 @@ TEST_F(WalletLegacyApi, outcommingExternalTransactionTotalAmount) {
   wallet.initAndLoad(walletData, "pass");
   WaitWalletSync(&walletObserver);
 
-  ASSERT_EQ(-(sent + fee), externalTransactionObserver.totalAmount);
+  ASSERT_EQ(-static_cast<int64_t>(sent + fee), externalTransactionObserver.totalAmount);
   wallet.shutdown();
 }
 
