@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -161,7 +161,7 @@ public:
 
 
 TEST_F(IntegrationTest, Wallet2Wallet) {
-  const uint64_t FEE = 1000000;
+  //const uint64_t FEE = 1000000;
 
   launchTestnet(2);
 

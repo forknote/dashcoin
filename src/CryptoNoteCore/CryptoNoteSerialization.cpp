@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -62,7 +62,7 @@ struct BinaryVariantTagGetter: boost::static_visitor<uint8_t> {
   uint8_t operator()(const CryptoNote::KeyOutput) { return  0x2; }
   uint8_t operator()(const CryptoNote::MultisignatureOutput) { return  0x3; }
   uint8_t operator()(const CryptoNote::Transaction) { return  0xcc; }
-  uint8_t operator()(const CryptoNote::Block) { return  0xbb; }
+  uint8_t operator()(const CryptoNote::BlockTemplate) { return  0xbb; }
 };
 
 struct VariantSerializer : boost::static_visitor<> {
@@ -185,7 +185,7 @@ namespace CryptoNote {
 void serialize(TransactionPrefix& txP, ISerializer& serializer) {
   serializer(txP.version, "version");
 
-  if (CURRENT_TRANSACTION_VERSION < txP.version) {
+  if (CURRENT_TRANSACTION_VERSION < txP.version && serializer.type() == ISerializer::INPUT) {
     throw std::runtime_error("Wrong transaction version");
   }
 
@@ -195,14 +195,28 @@ void serialize(TransactionPrefix& txP, ISerializer& serializer) {
   serializeAsBinary(txP.extra, "extra", serializer);
 }
 
+void serialize(BaseTransaction& tx, ISerializer& serializer) {
+  serializer(tx.version, "version");
+  serializer(tx.unlockTime, "unlock_time");
+  serializer(tx.inputs, "vin");
+  serializer(tx.outputs, "vout");
+  serializeAsBinary(tx.extra, "extra", serializer);
+
+  if (tx.version >= TRANSACTION_VERSION_2) {
+    size_t ignored = 0;
+    serializer(ignored, "ignored");
+  }
+}
+
 void serialize(Transaction& tx, ISerializer& serializer) {
   serialize(static_cast<TransactionPrefix&>(tx), serializer);
 
   size_t sigSize = tx.inputs.size();
   //TODO: make arrays without sizes
 //  serializer.beginArray(sigSize, "signatures");
-  
-  if (serializer.type() == ISerializer::INPUT) {
+
+  // ignore base transaction
+  if (serializer.type() == ISerializer::INPUT && !(sigSize == 1 && tx.inputs[0].type() == typeid(BaseInput))) {
     tx.signatures.resize(sigSize);
   }
 
@@ -314,7 +328,7 @@ void serialize(ParentBlockSerializer& pbs, ISerializer& serializer) {
 
   if (pbs.m_hashingSerialization) {
     Crypto::Hash minerTxHash;
-    if (!getObjectHash(pbs.m_parentBlock.baseTransaction, minerTxHash)) {
+    if (!getBaseTransactionHash(pbs.m_parentBlock.baseTransaction, minerTxHash)) {
       throw std::runtime_error("Get transaction hash error");
     }
 
@@ -398,7 +412,7 @@ void serialize(BlockHeader& header, ISerializer& serializer) {
   serializeBlockHeader(header, serializer);
 }
 
-void serialize(Block& block, ISerializer& serializer) {
+void serialize(BlockTemplate& block, ISerializer& serializer) {
   serializeBlockHeader(block, serializer);
 
   if (block.majorVersion >= BLOCK_MAJOR_VERSION_2) {
@@ -449,5 +463,40 @@ void serialize(KeyPair& keyPair, ISerializer& serializer) {
   serializer(keyPair.publicKey, "public_key");
 }
 
+// unpack to strings to maintain protocol compatibility with older versions
+void serialize(RawBlock& rawBlock, ISerializer& serializer) {
+  if (serializer.type() == ISerializer::INPUT) {
+    uint64_t blockSize;
+    serializer(blockSize, "block_size");
+    rawBlock.block.resize(static_cast<size_t>(blockSize));
+  } else {
+    auto blockSize = rawBlock.block.size();
+    serializer(blockSize, "block_size");
+  }
+
+  serializer.binary(rawBlock.block.data(), rawBlock.block.size(), "block");
+
+  if (serializer.type() == ISerializer::INPUT) {
+    uint64_t txCount;
+    serializer(txCount, "tx_count");
+    rawBlock.transactions.resize(static_cast<size_t>(txCount));
+
+    for (auto& txBlob : rawBlock.transactions) {
+      uint64_t txSize;
+      serializer(txSize, "tx_size");
+      txBlob.resize(txSize);
+      serializer.binary(txBlob.data(), txBlob.size(), "transaction");
+    }
+  } else {
+    auto txCount = rawBlock.transactions.size();
+    serializer(txCount, "tx_count");
+
+    for (auto& txBlob : rawBlock.transactions) {
+      auto txSize = txBlob.size();
+      serializer(txSize, "tx_size");
+      serializer.binary(txBlob.data(), txBlob.size(), "transaction");
+    }
+  }
+}
 
 } //namespace CryptoNote

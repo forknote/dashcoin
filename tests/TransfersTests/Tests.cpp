@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -336,7 +336,7 @@ TEST_F(TransfersTest, base) {
   wallet1.wallet()->addObserver(&walletObserver);
   ASSERT_TRUE(mineBlocks(*nodeDaemons[0], wallet1.address(), 1));
   ASSERT_TRUE(mineBlocks(*nodeDaemons[0], wallet1.address(), currency.minedMoneyUnlockWindow()));
-  wallet1.waitForSynchronizationToHeight(static_cast<uint32_t>(2 + currency.minedMoneyUnlockWindow()));
+  wallet1.waitForSynchronizationToHeight(2 + currency.minedMoneyUnlockWindow());
 
   // start syncing and wait for a transfer
   FutureGuard<bool> waitFuture(std::async(std::launch::async, [&transferObserver] { return transferObserver.waitTransfer(); }));

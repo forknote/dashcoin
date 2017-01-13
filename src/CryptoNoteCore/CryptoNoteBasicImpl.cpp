@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -90,14 +90,15 @@ namespace CryptoNote {
       check_key(adr.spendPublicKey) &&
       check_key(adr.viewPublicKey);
   }
-  //-----------------------------------------------------------------------
-  bool operator ==(const CryptoNote::Transaction& a, const CryptoNote::Transaction& b) {
-    return getObjectHash(a) == getObjectHash(b);
-  }
-  //-----------------------------------------------------------------------
-  bool operator ==(const CryptoNote::Block& a, const CryptoNote::Block& b) {
-    return CryptoNote::get_block_hash(a) == CryptoNote::get_block_hash(b);
-  }
+  ////-----------------------------------------------------------------------
+  //bool operator ==(const CryptoNote::Transaction& a, const CryptoNote::Transaction& b) {
+  //  return getObjectHash(a) == getObjectHash(b);
+  //}
+  ////-----------------------------------------------------------------------
+  //bool operator ==(const CryptoNote::BlockTemplate& a, const CryptoNote::BlockTemplate& b) {
+
+  //  return CryptoNote::get_block_hash(a) == CryptoNote::get_block_hash(b);
+  //}
 }
 
 //--------------------------------------------------------------------------------

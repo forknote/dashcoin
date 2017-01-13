@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -20,6 +20,7 @@
 
 #include "Common/StdInputStream.h"
 #include "Common/StdOutputStream.h"
+#include "CryptoNoteCore/CryptoNoteBasicImpl.h"
 #include "Serialization/BinaryInputStreamSerializer.h"
 #include "Serialization/BinaryOutputStreamSerializer.h"
 
@@ -279,15 +280,21 @@ void TransfersSyncronizer::load(std::istream& is) {
             auto prevState = getObjectState(sub->getContainer());
             setObjectState(sub->getContainer(), state);
             updatedStates.back().subscriptionStates.push_back(std::make_pair(acc, prevState));
+          } else {
+            m_logger(Logging::DEBUGGING) << "Subscription not found: " << m_currency.accountAddressAsString(acc);
           }
 
           s.endObject();
         }
+
         s.endArray();
+      } else {
+        m_logger(Logging::DEBUGGING) << "Consumer not found: " << viewKey;
       }
+
+      s.endObject();
     }
 
-    s.endObject();
     s.endArray();
 
   } catch (...) {

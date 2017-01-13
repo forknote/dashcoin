@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -18,8 +18,18 @@
 #include "WalletUtils.h"
 
 #include "CryptoNote.h"
+#include "crypto/crypto.h"
+#include "Wallet/WalletErrors.h"
 
 namespace CryptoNote {
+
+void throwIfKeysMismatch(const Crypto::SecretKey& secretKey, const Crypto::PublicKey& expectedPublicKey, const std::string& message) {
+  Crypto::PublicKey pub;
+  bool r = Crypto::secret_key_to_public_key(secretKey, pub);
+  if (!r || expectedPublicKey != pub) {
+    throw std::system_error(make_error_code(CryptoNote::error::WRONG_PASSWORD), message);
+  }
+}
 
 bool validateAddress(const std::string& address, const CryptoNote::Currency& currency) {
   CryptoNote::AccountPublicAddress ignore;

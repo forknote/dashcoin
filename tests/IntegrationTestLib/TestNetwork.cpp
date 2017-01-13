@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -195,7 +195,7 @@ void TestNetwork::addNode(const TestNodeConfiguration& cfg) {
 
   switch (cfg.nodeType) {
   case NodeType::InProcess:
-    node.reset(new InProcTestNode(cfg, m_currency));
+    node.reset(new InProcTestNode(cfg, m_currency, m_dispatcher));
     break;
   case NodeType::RPC:
     node = startDaemon(cfg);

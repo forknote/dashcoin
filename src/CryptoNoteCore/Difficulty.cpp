@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -56,7 +56,7 @@ namespace CryptoNote {
     return a + b < a || (c && a + b == (uint64_t) -1);
   }
 
-  bool check_hash(const Crypto::Hash &hash, difficulty_type difficulty) {
+  bool check_hash(const Crypto::Hash &hash, Difficulty difficulty) {
     uint64_t low, high, top, cur;
     // First check the highest word, this will most likely fail for a random hash.
     mul(swap64le(((const uint64_t *) &hash)[3]), difficulty, top, high);

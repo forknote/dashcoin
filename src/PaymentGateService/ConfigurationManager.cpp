@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -57,8 +57,7 @@ bool ConfigurationManager::init(int argc, char** argv) {
 
   po::options_description netNodeOptions("Local Node Options");
   CryptoNote::NetNodeConfig::initOptions(netNodeOptions);
-  CryptoNote::CoreConfig::initOptions(netNodeOptions);
-
+  
   po::options_description remoteNodeOptions("Remote Node Options");
   RpcNodeConfiguration::initOptions(remoteNodeOptions);
 
@@ -94,7 +93,6 @@ bool ConfigurationManager::init(int argc, char** argv) {
 
     gateConfiguration.init(confOptions);
     netNodeConfig.init(confOptions);
-    coreConfig.init(confOptions);
     remoteNodeConfig.init(confOptions);
 
     netNodeConfig.setTestnet(confOptions["testnet"].as<bool>());
@@ -104,8 +102,8 @@ bool ConfigurationManager::init(int argc, char** argv) {
   //command line options should override options from config file
   gateConfiguration.init(cmdOptions);
   netNodeConfig.init(cmdOptions);
-  coreConfig.init(cmdOptions);
   remoteNodeConfig.init(cmdOptions);
+  dataDir = command_line::get_arg(cmdOptions, command_line::arg_data_dir);
 
   if (cmdOptions["testnet"].as<bool>()) {
     netNodeConfig.setTestnet(true);

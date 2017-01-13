@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -531,7 +531,7 @@ void BlockchainSynchronizer::processBlocks(GetBlocksResponse& response) {
       break;
 
     case UpdateConsumersResult::nothingChanged:
-      if (m_node.getLastKnownBlockHeight() != m_node.getLastLocalBlockHeight()) {
+      if (m_node.getKnownBlockCount() != m_node.getLocalBlockCount()) {
         m_logger(DEBUGGING) << "Blockchain updated, resume blockchain synchronization";
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       } else {

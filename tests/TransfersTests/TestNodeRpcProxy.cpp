@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -87,8 +87,8 @@ namespace {
     ASSERT_TRUE(mineBlocks(*nodeDaemons[NODE_0], wallet1.address(), 1));
     ASSERT_TRUE(mineBlocks(*nodeDaemons[NODE_0], wallet1.address(), m_currency.minedMoneyUnlockWindow()));
 
-    wallet1.waitForSynchronizationToHeight(static_cast<uint32_t>(m_currency.minedMoneyUnlockWindow()) + 1);
-    wallet2.waitForSynchronizationToHeight(static_cast<uint32_t>(m_currency.minedMoneyUnlockWindow()) + 1);
+    wallet1.waitForSynchronizationToHeight(m_currency.minedMoneyUnlockWindow() + 1);
+    wallet2.waitForSynchronizationToHeight(m_currency.minedMoneyUnlockWindow() + 1);
 
     PoolChangedObserver observer;
     node0->addObserver(&observer);

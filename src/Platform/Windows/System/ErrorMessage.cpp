@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -16,6 +16,10 @@
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ErrorMessage.h"
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
 #include <cstddef>
 #include <windows.h>

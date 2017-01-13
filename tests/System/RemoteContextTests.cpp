@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -59,8 +59,11 @@ TEST_F(RemoteContextTests, canBeUsedWithoutObject) {
 
 TEST_F(RemoteContextTests, interruptIsInterruptingWait) {
   ContextGroup cg(dispatcher);
+  bool started = false;
+
   cg.spawn([&] {
     RemoteContext<> context(dispatcher, [&] {
+      started = true;
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     });
     ASSERT_NO_THROW(context.wait());
@@ -69,6 +72,8 @@ TEST_F(RemoteContextTests, interruptIsInterruptingWait) {
 
   cg.interrupt();
   cg.wait();
+
+  ASSERT_TRUE(started);
 }
 
 TEST_F(RemoteContextTests, interruptIsInterruptingGet) {
@@ -77,7 +82,7 @@ TEST_F(RemoteContextTests, interruptIsInterruptingGet) {
     RemoteContext<> context(dispatcher, [&] {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     });
-    ASSERT_NO_THROW(context.wait());
+    ASSERT_NO_THROW(context.get());
     ASSERT_TRUE(dispatcher.interrupted());
   });
 

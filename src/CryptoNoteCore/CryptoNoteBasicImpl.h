@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -44,8 +44,8 @@ namespace CryptoNote {
   bool parseAccountAddressString(uint64_t& prefix, AccountPublicAddress& adr, const std::string& str);
   bool is_coinbase(const Transaction& tx);
 
-  bool operator ==(const CryptoNote::Transaction& a, const CryptoNote::Transaction& b);
-  bool operator ==(const CryptoNote::Block& a, const CryptoNote::Block& b);
+  //bool operator ==(const CryptoNote::Transaction& a, const CryptoNote::Transaction& b);
+  //bool operator ==(const CryptoNote::Block& a, const CryptoNote::Block& b);
 }
 
 template <class T>

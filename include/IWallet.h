@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -42,6 +42,12 @@ enum WalletEventType {
   BALANCE_UNLOCKED,
   SYNC_PROGRESS_UPDATED,
   SYNC_COMPLETED,
+};
+
+enum class WalletSaveLevel : uint8_t {
+  SAVE_KEYS_ONLY,
+  SAVE_KEYS_AND_TRANSACTIONS,
+  SAVE_ALL
 };
 
 struct WalletTransactionCreatedData {
@@ -105,7 +111,7 @@ struct TransactionParameters {
   std::vector<std::string> sourceAddresses;
   std::vector<WalletOrder> destinations;
   uint64_t fee = 0;
-  uint64_t mixIn = 0;
+  uint16_t mixIn = 0;
   std::string extra;
   uint64_t unlockTimestamp = 0;
   DonationSettings donation;
@@ -126,13 +132,15 @@ class IWallet {
 public:
   virtual ~IWallet() {}
 
-  virtual void initialize(const std::string& password) = 0;
-  virtual void initializeWithViewKey(const Crypto::SecretKey& viewSecretKey, const std::string& password) = 0;
-  virtual void load(std::istream& source, const std::string& password) = 0;
+  virtual void initialize(const std::string& path, const std::string& password) = 0;
+  virtual void initializeWithViewKey(const std::string& path, const std::string& password, const Crypto::SecretKey& viewSecretKey) = 0;
+  virtual void load(const std::string& path, const std::string& password, std::string& extra) = 0;
+  virtual void load(const std::string& path, const std::string& password) = 0;
   virtual void shutdown() = 0;
 
   virtual void changePassword(const std::string& oldPassword, const std::string& newPassword) = 0;
-  virtual void save(std::ostream& destination, bool saveDetails = true, bool saveCache = true, bool encrypt = true) = 0;
+  virtual void save(WalletSaveLevel saveLevel = WalletSaveLevel::SAVE_ALL, const std::string& extra = "") = 0;
+  virtual void exportWallet(const std::string& path, bool encrypt = true, WalletSaveLevel saveLevel = WalletSaveLevel::SAVE_ALL, const std::string& extra = "") = 0;
 
   virtual size_t getAddressCount() const = 0;
   virtual std::string getAddress(size_t index) const = 0;
@@ -142,6 +150,7 @@ public:
   virtual std::string createAddress() = 0;
   virtual std::string createAddress(const Crypto::SecretKey& spendSecretKey) = 0;
   virtual std::string createAddress(const Crypto::PublicKey& spendPublicKey) = 0;
+  virtual std::vector<std::string> createAddressList(const std::vector<Crypto::SecretKey>& spendSecretKeys) = 0;
   virtual void deleteAddress(const std::string& address) = 0;
 
   virtual uint64_t getActualBalance() const = 0;

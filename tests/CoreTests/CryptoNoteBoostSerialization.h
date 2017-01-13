@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -119,8 +119,9 @@ namespace boost
 
 
   template <class Archive>
-  inline void serialize(Archive &a, CryptoNote::Block &b, const boost::serialization::version_type ver)
+  inline void serialize(Archive &a, CryptoNote::BlockTemplate &b, const boost::serialization::version_type ver)
   {
+    std::cout << "boooooooooooost serialize" << std::endl;
     a & b.majorVersion;
     a & b.minorVersion;
     a & b.timestamp;

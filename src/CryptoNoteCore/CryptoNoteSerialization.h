@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -40,8 +40,11 @@ namespace CryptoNote {
 struct AccountKeys;
 struct TransactionExtraMergeMiningTag;
 
+enum class SerializationTag : uint8_t { Base = 0xff, Key = 0x2, Multisignature = 0x3, Transaction = 0xcc, Block = 0xbb };
+
 void serialize(TransactionPrefix& txP, ISerializer& serializer);
 void serialize(Transaction& tx, ISerializer& serializer);
+void serialize(BaseTransaction& tx, ISerializer& serializer);
 void serialize(TransactionInput& in, ISerializer& serializer);
 void serialize(TransactionOutput& in, ISerializer& serializer);
 
@@ -55,7 +58,7 @@ void serialize(KeyOutput& key, ISerializer& serializer);
 void serialize(MultisignatureOutput& multisignature, ISerializer& serializer);
 
 void serialize(BlockHeader& header, ISerializer& serializer);
-void serialize(Block& block, ISerializer& serializer);
+void serialize(BlockTemplate& block, ISerializer& serializer);
 void serialize(ParentBlockSerializer& pbs, ISerializer& serializer);
 void serialize(TransactionExtraMergeMiningTag& tag, ISerializer& serializer);
 
@@ -63,5 +66,6 @@ void serialize(AccountPublicAddress& address, ISerializer& serializer);
 void serialize(AccountKeys& keys, ISerializer& s);
 
 void serialize(KeyPair& keyPair, ISerializer& serializer);
+void serialize(RawBlock& rawBlock, ISerializer& serializer);
 
 }

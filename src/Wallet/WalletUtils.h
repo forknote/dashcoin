@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -25,6 +25,7 @@
 
 namespace CryptoNote {
 
+void throwIfKeysMismatch(const Crypto::SecretKey& secretKey, const Crypto::PublicKey& expectedPublicKey, const std::string& message = "");
 bool validateAddress(const std::string& address, const CryptoNote::Currency& currency);
 
 std::ostream& operator<<(std::ostream& os, CryptoNote::WalletTransactionState state);

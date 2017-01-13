@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -33,7 +33,7 @@ public:
     bool used;
   };
 
-  class iterator {
+  class iterator : public std::iterator<std::bidirectional_iterator_tag, Value> {
   public:
     iterator(Value* value);
 

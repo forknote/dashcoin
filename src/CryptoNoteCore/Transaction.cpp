@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -504,16 +504,16 @@ namespace CryptoNote {
 
   bool TransactionImpl::validateInputs() const {
     return
-      check_inputs_types_supported(transaction) &&
-      check_inputs_overflow(transaction) &&
+      checkInputTypesSupported(transaction) &&
+      checkInputsOverflow(transaction) &&
       checkInputsKeyimagesDiff(transaction) &&
       checkMultisignatureInputsDiff(transaction);
   }
 
   bool TransactionImpl::validateOutputs() const {
     return
-      check_outs_valid(transaction) &&
-      check_outs_overflow(transaction);
+      checkOutsValid(transaction) &&
+      checkOutsOverflow(transaction);
   }
 
   bool TransactionImpl::validateSignatures() const {

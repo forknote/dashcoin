@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -52,13 +52,15 @@ struct IWalletBaseStub : public CryptoNote::IWallet, public CryptoNote::IFusionM
   IWalletBaseStub(System::Dispatcher& dispatcher) : m_eventOccurred(dispatcher) {}
   virtual ~IWalletBaseStub() {}
 
-  virtual void initialize(const std::string& password) override { }
-  virtual void initializeWithViewKey(const Crypto::SecretKey& viewSecretKey, const std::string& password) override { }
-  virtual void load(std::istream& source, const std::string& password) override { }
+  virtual void initialize(const std::string& path, const std::string& password) override { }
+  virtual void initializeWithViewKey(const std::string& path, const std::string& password, const Crypto::SecretKey& viewSecretKey) override { }
+  virtual void load(const std::string& path, const std::string& password, std::string& extra) override { }
+  virtual void load(const std::string& path, const std::string& password) override { }
   virtual void shutdown() override { }
 
   virtual void changePassword(const std::string& oldPassword, const std::string& newPassword) override { }
-  virtual void save(std::ostream& destination, bool saveDetails = true, bool saveCache = true, bool encrypt = true) override { }
+  virtual void save(WalletSaveLevel saveLevel = WalletSaveLevel::SAVE_ALL, const std::string& extra = "") override { }
+  virtual void exportWallet(const std::string& path, bool encrypt = true, WalletSaveLevel saveLevel = WalletSaveLevel::SAVE_ALL, const std::string& extra = "") override { }
 
   virtual size_t getAddressCount() const override { return 0; }
   virtual std::string getAddress(size_t index) const override { return ""; }
@@ -68,6 +70,7 @@ struct IWalletBaseStub : public CryptoNote::IWallet, public CryptoNote::IFusionM
   virtual std::string createAddress() override { return ""; }
   virtual std::string createAddress(const Crypto::SecretKey& spendSecretKey) override { return ""; }
   virtual std::string createAddress(const Crypto::PublicKey& spendPublicKey) override { return ""; }
+  virtual std::vector<std::string> createAddressList(const std::vector<Crypto::SecretKey>& spendSecretKeys) override { return std::vector<std::string>(); }
   virtual void deleteAddress(const std::string& address) override { }
 
   virtual uint64_t getActualBalance() const override { return 0; }
@@ -119,7 +122,7 @@ struct IWalletBaseStub : public CryptoNote::IWallet, public CryptoNote::IFusionM
   }
 
   // IFusionManager
-  virtual size_t createFusionTransaction(uint64_t threshold, uint64_t mixin,
+  virtual size_t createFusionTransaction(uint64_t threshold, uint16_t mixin,
     const std::vector<std::string>& sourceAddresses = {}, const std::string& destinationAddress = "") override {
     throw std::runtime_error("Not implemented");
   }
@@ -1041,7 +1044,7 @@ public:
     return tx;
   }
 
-  virtual size_t createFusionTransaction(uint64_t threshold, uint64_t mixin,
+  virtual size_t createFusionTransaction(uint64_t threshold, uint16_t mixin,
     const std::vector<std::string>& sourceAddresses = {}, const std::string& destinationAddress = "") override {
 
     lastThreshold = threshold;
