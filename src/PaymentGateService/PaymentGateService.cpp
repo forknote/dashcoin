@@ -27,6 +27,7 @@
 
 #include "Common/ScopeExit.h"
 #include "CryptoNoteCore/Core.h"
+#include "CryptoNoteCore/DatabaseBlockchainCache.h"
 #include "CryptoNoteCore/DatabaseBlockchainCacheFactory.h"
 #include "CryptoNoteCore/DataBaseConfig.h"
 #include "CryptoNoteCore/MainChainStorage.h"
@@ -179,6 +180,17 @@ void PaymentGateService::runInProcess(Logging::LoggerRef& log) {
   database.init(dbConfig);
   Tools::ScopeExit dbShutdownOnExit([&database] () { database.shutdown(); });
 
+  if (!CryptoNote::DatabaseBlockchainCache::checkDBSchemeVersion(database, logger))
+  {
+    dbShutdownOnExit.cancel();
+    database.shutdown();
+
+    database.destoy(dbConfig);
+
+    database.init(dbConfig);
+    dbShutdownOnExit.resume();
+  }
+
   CryptoNote::Currency currency = currencyBuilder.currency();
 
   log(Logging::INFO) << "initializing core";
@@ -243,7 +255,8 @@ void PaymentGateService::runRpcProxy(Logging::LoggerRef& log) {
   std::unique_ptr<CryptoNote::INode> node(
     PaymentService::NodeFactory::createNode(
       config.remoteNodeConfig.daemonHost, 
-      config.remoteNodeConfig.daemonPort));
+      config.remoteNodeConfig.daemonPort,
+      log.getLogger()));
 
   runWalletService(currency, *node);
 }
