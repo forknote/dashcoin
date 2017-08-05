@@ -1211,10 +1211,6 @@ auto error = validateSemantic(transaction, fee, blockIndex);
     return error;
   }
 
-  if (transaction.version > CURRENT_TRANSACTION_VERSION) {
-    return error::TransactionValidationError::INVALID_TRANSACTION_VERSION;
-  }
-
   size_t inputIndex = 0;
   for (const auto& input : transaction.inputs) {
     if (input.type() == typeid(KeyInput)) {
